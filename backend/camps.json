@@ -1,0 +1,56 @@
+[
+    {
+        "camp_id": 1,
+        "location": "Test Relief Center",
+        "max_capacity": 50,
+        "food_packets": 97,
+        "medical_kits": 40,
+        "volunteers": 10,
+        "food_packets_distributed": 1,
+        "victims": [
+            {
+                "victim_id": 2110,
+                "name": "Rohith",
+                "age": 21,
+                "health_condition": "normal",
+                "assigned_camp": 1
+            },
+            {
+                "victim_id": 2340,
+                "name": "Siddu",
+                "age": 20,
+                "health_condition": "normal",
+                "assigned_camp": 1
+            },
+            {
+                "victim_id": 2113,
+                "name": "Aditya",
+                "age": 21,
+                "health_condition": "normal",
+                "assigned_camp": 1
+            },
+            {
+                "victim_id": 2386,
+                "name": "tharun",
+                "age": 20,
+                "health_condition": "normal",
+                "assigned_camp": 1
+            },
+            {
+                "victim_id": 2114,
+                "name": "snehal",
+                "age": 20,
+                "health_condition": "normal",
+                "assigned_camp": 1
+            },
+            {
+                "victim_id": 2119,
+                "name": "rushik",
+                "age": 19,
+                "health_condition": "critical",
+                "assigned_camp": 1
+            }
+        ],
+        "medical_kits_distributed": 2
+    }
+]

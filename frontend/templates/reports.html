@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}Reports - Disaster Relief System{% endblock %}
+
+{% block content %}
+<div class="reports-page">
+    <section class="report-hero card shadow-sm mb-4 reveal-item">
+        <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <p class="dashboard-chip mb-2">Communication Center</p>
+                <h2 class="mb-1"><i class="fas fa-clipboard-list"></i> Reports & Communications</h2>
+                <p class="text-muted mb-0">Submit reports and manage communications between staff and management.</p>
+            </div>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+        </div>
+    </section>
+
+    <section class="report-summary mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Operational Analytics</h5>
+            </div>
+            <div class="card-body">
+                {% if report %}
+                <div class="row g-3 text-center">
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded bg-light">
+                            <p class="mb-1 text-muted">Total Camps</p>
+                            <h3 class="mb-0">{{ report.total_camps }}</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded bg-light">
+                            <p class="mb-1 text-muted">Total Victims</p>
+                            <h3 class="mb-0">{{ report.total_victims }}</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded bg-light">
+                            <p class="mb-1 text-muted">Critical Victims</p>
+                            <h3 class="mb-0">{{ report.critical_victims }}</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded bg-light">
+                            <p class="mb-1 text-muted">Highest Occupancy Camp</p>
+                            <h3 class="mb-0">{{ report.highest_occupancy_camp }} / {{ report.highest_occupancy_count }}</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded bg-light">
+                            <p class="mb-1 text-muted">Food Remaining</p>
+                            <h3 class="mb-0">{{ report.total_food_remaining }}</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded bg-light">
+                            <p class="mb-1 text-muted">Medical Remaining</p>
+                            <h3 class="mb-0">{{ report.total_medical_remaining }}</h3>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <p class="text-muted mb-0">No analytics available yet. Add camps and victims to generate a report summary.</p>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    {% if role == 'staff' %}
+    <!-- Staff Interface -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-plus-circle"></i> Submit New Report</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="/reports">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Report Title</label>
+                            <input type="text" class="form-control" id="title" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Submit Report
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5><i class="fas fa-list"></i> Your Reports</h5>
+                </div>
+                <div class="card-body">
+                    {% if reports %}
+                        {% for report in reports %}
+                            {% if report.submitted_by == 'staff' %}
+                            <div class="report-item mb-3 p-3 border rounded">
+                                <h6>{{ report.title }}</h6>
+                                <p class="text-muted small">{{ report.description }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        Submitted: {{ report.submitted_at | date }}
+                                    </small>
+                                    <span class="badge {{ report.status | statusClass }}">
+                                        {{ report.status | title }}
+                                    </span>
+                                </div>
+                                {% if report.response %}
+                                <div class="mt-2 p-2 bg-light rounded">
+                                    <strong>Management Response:</strong> {{ report.response }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No reports submitted yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Management Interface -->
+    <div class="card shadow">
+        <div class="card-header">
+            <h5><i class="fas fa-inbox"></i> All Reports</h5>
+        </div>
+        <div class="card-body">
+            {% if reports %}
+                {% for report in reports %}
+                <div class="report-item mb-4 p-3 border rounded">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h6>{{ report.title }}</h6>
+                        <span class="badge {{ report.status | statusClass }}">
+                            {{ report.status | title }}
+                        </span>
+                    </div>
+                    <p class="text-muted">{{ report.description }}</p>
+                    <div class="d-flex justify-content-between align-items-center text-muted small mb-2">
+                        <span>Submitted by: {{ report.submitted_by | title }} | {{ report.submitted_at | date }}</span>
+                    </div>
+                    {% if report.response %}
+                    <div class="mt-2 p-2 bg-light rounded">
+                        <strong>Your Response:</strong> {{ report.response }}
+                    </div>
+                    {% endif %}
+                    {% if report.status == 'pending' %}
+                    <form method="POST" action="/reports/{{ report.report_id }}/respond" class="mt-3">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <select name="status" class="form-select" required>
+                                    <option value="">Select Action</option>
+                                    <option value="approved">Approve</option>
+                                    <option value="rejected">Reject</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" name="response" class="form-control" placeholder="Response message" required>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-reply"></i> Respond
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">No reports available.</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}Camp Victims - Disaster Relief System{% endblock %}
+
+{% block content %}
+<div class="staff-camp-victims-page">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2><i class="fas fa-users"></i> Camp Victims Overview</h2>
+            <p class="text-muted mb-0">View all victims assigned to relief camps</p>
+        </div>
+        <div class="btn-group">
+            <a href="{{ url_for('register_victim') }}" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i> Register Victim
+            </a>
+            <a href="{{ url_for('distribute_resources') }}" class="btn btn-success">
+                <i class="fas fa-boxes"></i> Distribute Resources
+            </a>
+        </div>
+    </div>
+
+    {% if camps %}
+    <div class="accordion" id="campsAccordion">
+        {% for camp in camps %}
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ camp['camp_id'] }}">
+                <button class="accordion-button {% if not loop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ camp['camp_id'] }}" aria-expanded="{% if loop.first %}true{% else %}false{% endif %}" aria-controls="collapse{{ camp['camp_id'] }}">
+                    <div class="d-flex justify-content-between align-items-center w-100 me-3">
+                        <div>
+                            <i class="fas fa-campground text-primary"></i>
+                            <strong>Camp #{{ camp['camp_id'] }} - {{ camp['location'] }}</strong>
+                        </div>
+                        <div class="text-muted">
+                            <span class="badge bg-info">{{ camp['victims']|length }}/{{ camp['max_capacity'] }} victims</span>
+                            <span class="badge bg-warning ms-2">{{ camp['food_packets'] }} food</span>
+                            <span class="badge bg-danger ms-2">{{ camp['medical_kits'] }} medical</span>
+                        </div>
+                    </div>
+                </button>
+            </h2>
+            <div id="collapse{{ camp['camp_id'] }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}" aria-labelledby="heading{{ camp['camp_id'] }}" data-bs-parent="#campsAccordion">
+                <div class="accordion-body">
+                    {% if camp['victims'] %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th><i class="fas fa-hashtag"></i> Victim ID</th>
+                                    <th><i class="fas fa-user"></i> Name</th>
+                                    <th><i class="fas fa-birthday-cake"></i> Age</th>
+                                    <th><i class="fas fa-heartbeat"></i> Health Condition</th>
+                                    <th><i class="fas fa-cog"></i> Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for victim in camp['victims'] %}
+                                <tr>
+                                    <td><strong>{{ victim['victim_id'] }}</strong></td>
+                                    <td>{{ victim['name'] }}</td>
+                                    <td>{{ victim['age'] }} years</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            {% if victim['health_condition'] == 'critical' %}
+                                                <span class="badge bg-danger">
+                                                    <i class="fas fa-exclamation-triangle"></i> Critical
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-check-circle"></i> Normal
+                                                </span>
+                                            {% endif %}
+                                            <button class="btn btn-sm btn-outline-secondary update-status-btn"
+                                                    data-victim-id="{{ victim['victim_id'] }}"
+                                                    data-current-status="{{ victim['health_condition'] }}"
+                                                    title="Update Status">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success distribute-btn"
+                                                data-victim-id="{{ victim['victim_id'] }}"
+                                                data-victim-name="{{ victim['name'] }}"
+                                                title="Distribute Resources">
+                                            <i class="fas fa-boxes"></i> Distribute
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info mb-0">
+                        <i class="fas fa-info-circle"></i> No victims assigned to this camp yet.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> No camps available. Management needs to add camps first.
+    </div>
+    {% endif %}
+</div>
+
+<!-- Distribution Modal -->
+<div class="modal fade" id="distributeModal" tabindex="-1" aria-labelledby="distributeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="distributeModalLabel">
+                    <i class="fas fa-boxes"></i> Distribute Resources
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="distributeForm" method="POST" action="{{ url_for('distribute_resources') }}">
+                <div class="modal-body">
+                    <input type="hidden" id="victimIdInput" name="victim_id">
+                    <p>Distribute resources to <strong id="victimNameDisplay"></strong>?</p>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Note:</strong> Critical victims will receive medical kits first. Normal victims will receive food packets.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Distribute Resources</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Status Update Modal -->
+<div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="statusModalLabel">
+                    <i class="fas fa-user-md"></i> Update Victim Status
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="statusForm" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" id="statusVictimIdInput" name="victim_id">
+                    <p>Update health condition for victim ID: <strong id="statusVictimIdDisplay"></strong></p>
+                    
+                    <div class="mb-3">
+                        <label for="health_condition" class="form-label">Health Condition</label>
+                        <select class="form-select" id="health_condition" name="health_condition" required>
+                            <option value="normal">Normal</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Note:</strong> Critical victims receive priority medical support and medical kits first.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Status</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const distributeButtons = document.querySelectorAll('.distribute-btn');
+    const distributeModal = new bootstrap.Modal(document.getElementById('distributeModal'));
+    const victimIdInput = document.getElementById('victimIdInput');
+    const victimNameDisplay = document.getElementById('victimNameDisplay');
+
+    const statusButtons = document.querySelectorAll('.update-status-btn');
+    const statusModal = new bootstrap.Modal(document.getElementById('statusModal'));
+    const statusVictimIdInput = document.getElementById('statusVictimIdInput');
+    const statusVictimIdDisplay = document.getElementById('statusVictimIdDisplay');
+    const healthConditionSelect = document.getElementById('health_condition');
+
+    distributeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const victimId = this.getAttribute('data-victim-id');
+            const victimName = this.getAttribute('data-victim-name');
+
+            victimIdInput.value = victimId;
+            victimNameDisplay.textContent = victimName;
+            distributeModal.show();
+        });
+    });
+
+    statusButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const victimId = this.getAttribute('data-victim-id');
+            const currentStatus = this.getAttribute('data-current-status');
+
+            statusVictimIdInput.value = victimId;
+            statusVictimIdDisplay.textContent = victimId;
+            healthConditionSelect.value = currentStatus;
+            
+            // Set form action
+            document.getElementById('statusForm').action = `/update_victim_status/${victimId}`;
+            
+            statusModal.show();
+        });
+    });
+});
+</script>
+{% endblock %}

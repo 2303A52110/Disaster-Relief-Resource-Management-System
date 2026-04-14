@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Add Camp - Disaster Relief System{% endblock %}
+
+{% block content %}
+<div class="add-camp-page">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="fas fa-plus-circle"></i> Add New Relief Camp</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('add_camp') }}" class="needs-validation" novalidate>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="camp_id" class="form-label">
+                                    <i class="fas fa-hashtag"></i> Camp ID *
+                                </label>
+                                <input type="number" class="form-control" id="camp_id" name="camp_id" required min="1">
+                                <div class="invalid-feedback">Enter a valid camp ID (1 or greater).</div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="location" class="form-label">
+                                    <i class="fas fa-map-marker-alt"></i> Location *
+                                </label>
+                                <input type="text" class="form-control" id="location" name="location" required>
+                                <div class="invalid-feedback">Location is required.</div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="max_capacity" class="form-label">
+                                    <i class="fas fa-users"></i> Maximum Capacity *
+                                </label>
+                                <input type="number" class="form-control" id="max_capacity" name="max_capacity" required min="1">
+                                <div class="invalid-feedback">Capacity must be at least 1.</div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="volunteers" class="form-label">
+                                    <i class="fas fa-hands-helping"></i> Number of Volunteers *
+                                </label>
+                                <input type="number" class="form-control" id="volunteers" name="volunteers" required min="0">
+                                <div class="invalid-feedback">Volunteers cannot be negative.</div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="food_packets" class="form-label">
+                                    <i class="fas fa-utensils"></i> Food Packets *
+                                </label>
+                                <input type="number" class="form-control" id="food_packets" name="food_packets" required min="0">
+                                <div class="invalid-feedback">Food packets cannot be negative.</div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="medical_kits" class="form-label">
+                                    <i class="fas fa-first-aid"></i> Medical Kits *
+                                </label>
+                                <input type="number" class="form-control" id="medical_kits" name="medical_kits" required min="0">
+                                <div class="invalid-feedback">Medical kits cannot be negative.</div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-success btn-lg">
+                                        <i class="fas fa-save"></i> Add Camp
+                                    </button>
+                                    <a href="{{ url_for('camps') }}" class="btn btn-secondary">
+                                        <i class="fas fa-arrow-left"></i> Back to Camps
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

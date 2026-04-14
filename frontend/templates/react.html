@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Smart Relief Portal - Disaster Relief System{% endblock %}
+
+{% block content %}
+<section class="mb-4 text-center react-page-intro">
+    <span class="hero-chip bg-primary-subtle text-primary border border-primary-subtle">React + MongoDB workspace</span>
+    <h2 class="fw-bold mb-2">Smart Disaster Relief Portal</h2>
+    <p class="text-muted mb-0">Role-based operations for administrators and victims, backed by MongoDB when available and JSON fallback during local development.</p>
+</section>
+<div id="react-root"></div>
+{% endblock %}
+
+{% block scripts %}
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel" src="{{ url_for('static', filename='react-app.js') }}"></script>
+{% endblock %}

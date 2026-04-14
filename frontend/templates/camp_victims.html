@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Camp Victims - Disaster Relief System{% endblock %}
+
+{% block content %}
+<div class="camp-victims-page">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2><i class="fas fa-users"></i> Camp #{{ camp['camp_id'] }} - Victims</h2>
+            <p class="text-muted mb-0">
+                <i class="fas fa-map-marker-alt"></i> {{ camp['location'] }} |
+                <i class="fas fa-users"></i> {{ victims|length }}/{{ camp['max_capacity'] }} victims
+            </p>
+        </div>
+        <a href="{% if session.role == 'management' %}{{ url_for('camps') }}{% else %}{{ url_for('dashboard') }}{% endif %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    </div>
+
+    {% if victims %}
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-primary">
+                        <tr>
+                            <th><i class="fas fa-hashtag"></i> Victim ID</th>
+                            <th><i class="fas fa-user"></i> Name</th>
+                            <th><i class="fas fa-birthday-cake"></i> Age</th>
+                            <th><i class="fas fa-heartbeat"></i> Health Condition</th>
+                            {% if session.role == 'management' %}
+                            <th><i class="fas fa-cog"></i> Actions</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for victim in victims %}
+                        <tr>
+                            <td><strong>{{ victim['victim_id'] }}</strong></td>
+                            <td>{{ victim['name'] }}</td>
+                            <td>{{ victim['age'] }} years</td>
+                            <td>
+                                {% if victim['health_condition'] == 'critical' %}
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-exclamation-triangle"></i> Critical
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check-circle"></i> Normal
+                                    </span>
+                                {% endif %}
+                            </td>
+                            {% if session.role == 'management' %}
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ url_for('edit_victim', victim_id=victim['victim_id']) }}"
+                                       class="btn btn-sm btn-warning" title="Edit Victim">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form method="POST" action="{{ url_for('delete_victim', victim_id=victim['victim_id']) }}"
+                                          style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this victim?');">
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Delete Victim">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0 text-muted">
+                        <i class="fas fa-info-circle"></i> Total Victims: <strong>{{ victims|length }}</strong>
+                    </p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <p class="mb-0 text-muted">
+                        <i class="fas fa-utensils"></i> Food Packets: <strong>{{ camp['food_packets'] }}</strong> |
+                        <i class="fas fa-first-aid"></i> Medical Kits: <strong>{{ camp['medical_kits'] }}</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> No victims are currently assigned to this camp.
+        {% if session.role == 'staff' %}
+        <a href="{{ url_for('register_victim') }}" class="alert-link">Register a new victim</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

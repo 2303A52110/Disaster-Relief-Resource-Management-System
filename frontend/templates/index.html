@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Disaster Relief System{% endblock %}
+
+{% block content %}
+<section class="hero-section relief-hero text-center py-5">
+    <div class="hero-pattern"></div>
+    <div class="position-relative">
+        <p class="hero-chip">Emergency Operations Console</p>
+        <h1 class="display-3 fw-bold mb-3">
+            <i class="fas fa-hand-holding-medical"></i> Smart Disaster Relief System
+        </h1>
+        <p class="lead hero-subtitle mb-4">Coordinate camps, track victims, and allocate resources from one operational workspace.</p>
+
+        <div class="row g-3 justify-content-center mb-4 stat-grid">
+            <div class="col-6 col-md-3">
+                <div class="stat-card reveal-item">
+                    <p class="stat-label">Total Camps</p>
+                    <h3 class="counter" data-target="{{ home_stats.total_camps if home_stats else 0 }}">0</h3>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card reveal-item">
+                    <p class="stat-label">Registered Victims</p>
+                    <h3 class="counter" data-target="{{ home_stats.total_victims if home_stats else 0 }}">0</h3>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card reveal-item">
+                    <p class="stat-label">Critical Cases</p>
+                    <h3 class="counter" data-target="{{ home_stats.critical_victims if home_stats else 0 }}">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-lg btn-light px-4">
+                <i class="fas fa-tachometer-alt"></i> Open Dashboard
+            </a>
+            <a href="{{ url_for('search_victim') }}" class="btn btn-lg btn-outline-light px-4">
+                <i class="fas fa-search"></i> Search Victim
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="row g-4 mt-2 actions-section">
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100 hover-card reveal-item">
+            <div class="card-body text-center p-4">
+                <i class="fas fa-campground fa-3x text-success mb-3"></i>
+                <h5 class="card-title">Manage Camps</h5>
+                <p class="card-text">Add and monitor relief camps across affected areas.</p>
+                <div class="d-flex justify-content-center gap-2 flex-wrap">
+                    <a href="{{ url_for('add_camp') }}" class="btn btn-success">Add Camp</a>
+                    <a href="{{ url_for('camps') }}" class="btn btn-outline-success">View All</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100 hover-card reveal-item">
+            <div class="card-body text-center p-4">
+                <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                <h5 class="card-title">Register Victims</h5>
+                <p class="card-text">Register people quickly and keep records up to date.</p>
+                <div class="d-flex justify-content-center gap-2 flex-wrap">
+                    <a href="{{ url_for('register_victim') }}" class="btn btn-primary">Register</a>
+                    <a href="{{ url_for('victims') }}" class="btn btn-outline-primary">View All</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100 hover-card reveal-item">
+            <div class="card-body text-center p-4">
+                <i class="fas fa-box-open fa-3x text-warning mb-3"></i>
+                <h5 class="card-title">Distribute Resources</h5>
+                <p class="card-text">Allocate food packets and medical kits with full visibility.</p>
+                <div class="d-flex justify-content-center gap-2 flex-wrap">
+                    <a href="{{ url_for('distribute_resources') }}" class="btn btn-warning">Distribute</a>
+                    <a href="{{ url_for('reports') }}" class="btn btn-outline-warning">Reports</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="card shadow mt-4 quick-actions-card reveal-item">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+            <h4 class="card-title mb-0"><i class="fas fa-bolt"></i> Quick Actions</h4>
+            <span class="text-muted">Fast access to commonly used pages</span>
+        </div>
+        <div class="d-flex justify-content-center justify-content-md-start gap-3 flex-wrap">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a href="{{ url_for('search_victim') }}" class="btn btn-info text-white">
+                <i class="fas fa-search"></i> Search Victim
+            </a>
+            <a href="{{ url_for('reports') }}" class="btn btn-danger">
+                <i class="fas fa-chart-bar"></i> View Reports
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+{% endblock %}

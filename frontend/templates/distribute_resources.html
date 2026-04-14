@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Distribute Resources - Disaster Relief System{% endblock %}
+
+{% block content %}
+<div class="distribute-resources-page">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0"><i class="fas fa-box-open"></i> Distribute Resources</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> 
+                        <strong>Note:</strong> Critical victims will automatically receive medical kits. 
+                        Normal victims will receive food packets.
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('distribute_resources') }}" class="needs-validation" novalidate>
+                        <div class="mb-3">
+                            <label for="victim_id" class="form-label">
+                                <i class="fas fa-user"></i> Select Victim *
+                            </label>
+                            <select class="form-select" id="victim_id" name="victim_id" required>
+                                <option value="">Choose a victim...</option>
+                                {% for victim in victims %}
+                                <option value="{{ victim['victim_id'] }}">
+                                    {{ victim['name'] }} (ID: {{ victim['victim_id'] }}) - 
+                                    {% if victim['health_condition'] == 'critical' %}
+                                        🚨 Critical
+                                    {% else %}
+                                        ✅ Normal
+                                    {% endif %}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <div class="invalid-feedback">Please select a victim for distribution.</div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-warning btn-lg" {% if not victims %}disabled{% endif %}>
+                                <i class="fas fa-hand-holding"></i> Distribute Resources
+                            </button>
+                            
+                            <form method="POST" action="{{ url_for('distribute_priority') }}" class="mt-2">
+                                <button type="submit" class="btn btn-danger btn-lg w-100" {% if not victims %}disabled{% endif %}>
+                                    <i class="fas fa-sort-amount-up"></i> Distribute by Priority (All Critical First)
+                                </button>
+                            </form>
+                        </div>
+                    </form>
+                    
+                    {% if not victims %}
+                    <small class="text-danger">
+                        <i class="fas fa-exclamation-circle"></i> No victims registered yet.
+                    </small>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-list"></i> Distribution Rules</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <i class="fas fa-first-aid text-danger"></i> 
+                            <strong>Critical Victims:</strong> Priority medical kit allocation
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-utensils text-warning"></i> 
+                            <strong>Normal Victims:</strong> Food packet allocation
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-check-circle text-success"></i> 
+                            <strong>Auto-deduction:</strong> Resources automatically deducted from camp inventory
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-exclamation-triangle text-warning"></i> 
+                            <strong>Availability Check:</strong> System checks resource availability before distribution
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card shadow mt-3">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Resource Overview</h5>
+                </div>
+                <div class="card-body">
+                    {% if victims %}
+                    <p><strong>Total Victims:</strong> {{ overview.total }}</p>
+                    <p><strong>Critical Victims:</strong> 
+                        <span class="badge bg-danger">
+                            {{ overview.critical }}
+                        </span>
+                    </p>
+                    <p><strong>Normal Victims:</strong> 
+                        <span class="badge bg-success">
+                            {{ overview.normal }}
+                        </span>
+                    </p>
+                    {% else %}
+                    <p class="text-muted">No data available</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

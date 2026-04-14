@@ -1,0 +1,50 @@
+[
+    {
+        "victim_id": 2110,
+        "name": "Rohith",
+        "age": 21,
+        "health_condition": "normal",
+        "assigned_camp": 1,
+        "resources_received": false
+    },
+    {
+        "victim_id": 2340,
+        "name": "Siddu",
+        "age": 20,
+        "health_condition": "normal",
+        "assigned_camp": 1,
+        "resources_received": false
+    },
+    {
+        "victim_id": 2113,
+        "name": "Aditya",
+        "age": 21,
+        "health_condition": "normal",
+        "assigned_camp": 1,
+        "resources_received": false
+    },
+    {
+        "victim_id": 2386,
+        "name": "tharun",
+        "age": 20,
+        "health_condition": "normal",
+        "assigned_camp": 1,
+        "resources_received": false
+    },
+    {
+        "victim_id": 2114,
+        "name": "snehal",
+        "age": 20,
+        "health_condition": "normal",
+        "assigned_camp": 1,
+        "resources_received": false
+    },
+    {
+        "victim_id": 2119,
+        "name": "rushik",
+        "age": 19,
+        "health_condition": "critical",
+        "assigned_camp": 1,
+        "resources_received": true
+    }
+]

@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Disaster Relief System{% endblock %}
+
+{% block content %}
+<div class="dashboard modern-dashboard">
+    <section class="dashboard-hero card shadow-sm mb-4 reveal-item">
+        <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <p class="dashboard-chip mb-2">Live Operations Snapshot</p>
+                <h2 class="mb-1"><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+                <p class="text-muted mb-0">Real-time overview of camps, victims, and critical resource indicators.</p>
+            </div>
+            <a href="{{ url_for('reports') }}" class="btn btn-primary">
+                <i class="fas fa-chart-bar"></i> Open Reports
+            </a>
+        </div>
+    </section>
+    
+    {% if report %}
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary reveal-item">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-campground"></i> Total Camps</h5>
+                    <h2 class="display-4 counter" data-target="{{ report.total_camps }}">{{ report.total_camps }}</h2>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-white bg-success reveal-item">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-users"></i> Total Victims</h5>
+                    <h2 class="display-4 counter" data-target="{{ report.total_victims }}">{{ report.total_victims }}</h2>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-white bg-warning reveal-item">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-utensils"></i> Food Remaining</h5>
+                    <h2 class="display-4 counter" data-target="{{ report.total_food_remaining }}">{{ report.total_food_remaining }}</h2>
+                    <small>Available</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-white bg-danger reveal-item">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-first-aid"></i> Medical Kits</h5>
+                    <h2 class="display-4 counter" data-target="{{ report.total_medical_remaining }}">{{ report.total_medical_remaining }}</h2>
+                    <small>Remaining</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-info reveal-item">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-utensils"></i> Food Distributed</h5>
+                    <h2 class="display-4 counter" data-target="{{ report.total_food_distributed }}">{{ report.total_food_distributed }}</h2>
+                    <small>Total</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-white bg-secondary reveal-item">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-first-aid"></i> Medical Distributed</h5>
+                    <h2 class="display-4 counter" data-target="{{ report.total_medical_distributed }}">{{ report.total_medical_distributed }}</h2>
+                    <small>Total</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-white bg-danger reveal-item">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-exclamation-triangle"></i> Critical Victims</h5>
+                    <h2 class="display-4 counter" data-target="{{ report.critical_victims }}">{{ report.critical_victims }}</h2>
+                    <small>Need Attention</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-white bg-success reveal-item">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-trophy"></i> Highest Occupancy</h5>
+                    <h2 class="display-4">Camp #{{ report.highest_occupancy_camp }}</h2>
+                    <small>{{ report.highest_occupancy_count }} victims ({{ report.highest_occupancy_percentage }}%)</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-info reveal-item">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-users-cog"></i> Total Volunteers</h5>
+                    <h2 class="display-4 counter" data-target="{{ report.total_volunteers }}">{{ report.total_volunteers }}</h2>
+                    <small>Available</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-white bg-warning reveal-item">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-user-check"></i> Volunteers Assigned</h5>
+                    <h2 class="display-4 counter" data-target="{{ report.total_volunteers_assigned }}">{{ report.total_volunteers_assigned }}</h2>
+                    <small>Active</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-white bg-secondary reveal-item">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-chart-line"></i> Most Resource Used</h5>
+                    <h2 class="display-4">Camp #{{ report.most_resource_used_camp }}</h2>
+                    <small>{{ report.most_resource_used_count }} items</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-white bg-dark reveal-item">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-exclamation-circle"></i> Data Issues</h5>
+                    <h2 class="display-4">{{ (report.data_consistency_errors or [])|length }}</h2>
+                    <small>Errors Found</small>
+                </div>
+            </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card reveal-item">
+                <div class="card-header bg-primary text-white">
+                    <h5><i class="fas fa-campground"></i> Recent Camps</h5>
+                </div>
+                <div class="card-body">
+                    {% if camps %}
+                    <ul class="list-group">
+                        {% for camp in camps[:5] %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><strong>{{ camp['location'] }}</strong> (Camp #{{ camp['camp_id'] }})</span>
+                            <span class="badge bg-primary rounded-pill">{{ camp['victims']|length }}/{{ camp['max_capacity'] }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-muted">No camps registered yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card reveal-item">
+                <div class="card-header bg-success text-white">
+                    <h5><i class="fas fa-users"></i> Recent Victims</h5>
+                </div>
+                <div class="card-body">
+                    {% if victims %}
+                    <ul class="list-group">
+                        {% for victim in victims[:5] %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{{ victim['name'] }} (Age: {{ victim['age'] }})</span>
+                            <span class="badge bg-{{ 'danger' if victim['health_condition'] == 'critical' else 'success' }} rounded-pill">
+                                {{ victim['health_condition'] }}
+                            </span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-muted">No victims registered yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+{% endblock %}

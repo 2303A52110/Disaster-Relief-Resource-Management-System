@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Camps - Disaster Relief System{% endblock %}
+
+{% block content %}
+<div class="camps-page">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-campground"></i> Relief Camps</h2>
+        <a href="{{ url_for('add_camp') }}" class="btn btn-success">
+            <i class="fas fa-plus"></i> Add New Camp
+        </a>
+    </div>
+
+    {% if camps %}
+    <div class="row g-4">
+        {% for camp in camps %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-campground"></i> Camp #{{ camp['camp_id'] }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-3 text-primary">
+                        <i class="fas fa-map-marker-alt"></i> {{ camp['location'] }}
+                    </h6>
+                    
+                    <div class="camp-stats">
+                        <div class="stat-item mb-2">
+                            <i class="fas fa-users text-info"></i> 
+                            <strong>Occupancy:</strong> 
+                            <span class="badge bg-info">{{ camp['victims']|length }}/{{ camp['max_capacity'] }}</span>
+                        </div>
+                        
+                        <div class="progress mb-3">
+                            {% set occupancy_percent = (camp['victims']|length / camp['max_capacity'] * 100) if camp['max_capacity'] > 0 else 0 %}
+                            <!-- CSS linter false positive: Jinja2 template variable -->
+                            <div class="progress-bar {% if occupancy_percent > 80 %}bg-danger{% elif occupancy_percent > 50 %}bg-warning{% else %}bg-success{% endif %}" 
+                                 role="progressbar" aria-valuenow="{{ occupancy_percent|round|int }}" aria-valuemin="0" aria-valuemax="100"
+                                 style="width:{{ occupancy_percent|round|int }}%">
+                                {{ occupancy_percent|round|int }}%
+                            </div>
+                        </div>
+                        
+                        <div class="stat-item mb-2">
+                            <i class="fas fa-utensils text-warning"></i> 
+                            <strong>Food Packets:</strong> 
+                            <span class="badge bg-warning">{{ camp['food_packets'] }}</span>
+                        </div>
+                        
+                        <div class="stat-item mb-2">
+                            <i class="fas fa-first-aid text-danger"></i> 
+                            <strong>Medical Kits:</strong> 
+                            <span class="badge bg-danger">{{ camp['medical_kits'] }}</span>
+                        </div>
+                        
+                        <div class="stat-item">
+                            <i class="fas fa-hands-helping text-success"></i> 
+                            <strong>Volunteers:</strong> 
+                            <span class="badge bg-success">{{ camp['volunteers'] }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            {% if camp['victims']|length >= camp['max_capacity'] %}
+                                <span class="badge bg-danger">FULL</span>
+                            {% else %}
+                                <span class="badge bg-success">ACCEPTING VICTIMS</span>
+                            {% endif %}
+                        </div>
+                        <div class="btn-group" role="group">
+                            <a href="{{ url_for('manage_resources', campId=camp['camp_id']) }}" 
+                               class="btn btn-sm btn-warning" title="Manage Resources">
+                                <i class="fas fa-boxes"></i>
+                            </a>
+                            <a href="{{ url_for('camp_victims', campId=camp['camp_id']) }}" 
+                               class="btn btn-sm btn-info" title="View Victims">
+                                <i class="fas fa-users"></i>
+                            </a>
+                            <a href="{{ url_for('edit_camp', campId=camp['camp_id']) }}" 
+                               class="btn btn-sm btn-primary" title="Edit Camp">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form method="POST" action="{{ url_for('delete_camp', campId=camp['camp_id']) }}" 
+                                  class="d-inline" 
+                                  onsubmit="return confirm('Are you sure you want to delete this camp? This action cannot be undone and will only work if the camp has no victims.');">
+                                <button type="submit" class="btn btn-sm btn-danger" title="Delete Camp">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> No camps registered yet. 
+        <a href="{{ url_for('add_camp') }}" class="alert-link">Add your first camp</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

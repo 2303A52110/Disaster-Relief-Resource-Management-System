@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Victim - Disaster Relief System{% endblock %}
+
+{% block content %}
+<div class="edit-victim-page">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0"><i class="fas fa-user-edit"></i> Edit Victim Details</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('edit_victim', victim_id=victim['victim_id']) }}" class="needs-validation" novalidate>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="victim_id" class="form-label">
+                                    <i class="fas fa-hashtag"></i> Victim ID
+                                </label>
+                                <input type="number" class="form-control" id="victim_id" name="victim_id" 
+                                       value="{{ victim['victim_id'] }}" disabled readonly>
+                                <small class="text-muted">Victim ID cannot be changed</small>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">
+                                    <i class="fas fa-user"></i> Full Name *
+                                </label>
+                                <input type="text" class="form-control" id="name" name="name" 
+                                       value="{{ victim['name'] }}" required>
+                                <div class="invalid-feedback">Victim name is required.</div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="age" class="form-label">
+                                    <i class="fas fa-birthday-cake"></i> Age *
+                                </label>
+                                <input type="number" class="form-control" id="age" name="age" 
+                                       value="{{ victim['age'] }}" required min="0" max="150">
+                                <div class="invalid-feedback">Enter an age between 0 and 150.</div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="health_condition" class="form-label">
+                                    <i class="fas fa-heartbeat"></i> Health Condition *
+                                </label>
+                                <select class="form-select" id="health_condition" name="health_condition" required>
+                                    <option value="">Select condition...</option>
+                                    <option value="normal" {% if victim['health_condition'] == 'normal' %}selected{% endif %}>
+                                        Normal
+                                    </option>
+                                    <option value="critical" {% if victim['health_condition'] == 'critical' %}selected{% endif %}>
+                                        Critical
+                                    </option>
+                                </select>
+                                <div class="invalid-feedback">Please select a health condition.</div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label for="camp_id" class="form-label">
+                                    <i class="fas fa-campground"></i> Assign to Camp *
+                                </label>
+                                <select class="form-select" id="camp_id" name="camp_id" required>
+                                    <option value="">Select camp...</option>
+                                    {% for camp in camps %}
+                                    <option value="{{ camp['camp_id'] }}" 
+                                            {% if camp['camp_id'] == victim['assigned_camp'] %}selected{% endif %}
+                                            {% if camp['victims']|length >= camp['max_capacity'] and camp['camp_id'] != victim['assigned_camp'] %}disabled{% endif %}>
+                                        Camp #{{ camp['camp_id'] }} - {{ camp['location'] }} 
+                                        ({{ camp['victims']|length }}/{{ camp['max_capacity'] }})
+                                        {% if camp['victims']|length >= camp['max_capacity'] and camp['camp_id'] != victim['assigned_camp'] %}[FULL]{% endif %}
+                                        {% if camp['camp_id'] == victim['assigned_camp'] %}[CURRENT]{% endif %}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">Please select a camp.</div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i> 
+                                    <strong>Note:</strong> Changing the assigned camp will transfer the victim to the new camp if capacity is available.
+                                </div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-warning btn-lg">
+                                        <i class="fas fa-save"></i> Update Victim Details
+                                    </button>
+                                    <a href="{{ url_for('victims') }}" class="btn btn-secondary">
+                                        <i class="fas fa-arrow-left"></i> Cancel & Back to Victims
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

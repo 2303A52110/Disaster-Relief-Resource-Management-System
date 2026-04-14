@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Resources - Disaster Relief System{% endblock %}
+
+{% block content %}
+<div class="manage-resources-page">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-boxes"></i> Manage Resources - Camp #{{ camp['camp_id'] }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="camp-info mb-4 p-3 bg-light rounded">
+                        <h5 class="text-primary">
+                            <i class="fas fa-campground"></i> {{ camp['location'] }}
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="mb-1">
+                                    <i class="fas fa-users text-info"></i>
+                                    <strong>Occupancy:</strong> {{ camp['victims']|length }}/{{ camp['max_capacity'] }}
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-1">
+                                    <i class="fas fa-hands-helping text-success"></i>
+                                    <strong>Volunteers:</strong> {{ camp['volunteers'] }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form method="POST" action="{{ url_for('manage_resources', campId=camp['camp_id']) }}" class="needs-validation" novalidate>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="food_packets" class="form-label">
+                                    <i class="fas fa-utensils"></i> Food Packets *
+                                </label>
+                                <input type="number" class="form-control" id="food_packets" name="food_packets"
+                                       value="{{ camp['food_packets'] }}" required min="0">
+                                <div class="invalid-feedback">Food packets must be 0 or greater.</div>
+                                <small class="form-text text-muted">
+                                    Currently available: {{ camp['food_packets'] }}
+                                </small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="medical_kits" class="form-label">
+                                    <i class="fas fa-first-aid"></i> Medical Kits *
+                                </label>
+                                <input type="number" class="form-control" id="medical_kits" name="medical_kits"
+                                       value="{{ camp['medical_kits'] }}" required min="0">
+                                <div class="invalid-feedback">Medical kits must be 0 or greater.</div>
+                                <small class="form-text text-muted">
+                                    Currently available: {{ camp['medical_kits'] }}
+                                </small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="volunteers" class="form-label">
+                                    <i class="fas fa-hands-helping"></i> Volunteers *
+                                </label>
+                                <input type="number" class="form-control" id="volunteers" name="volunteers"
+                                       value="{{ camp['volunteers'] }}" required min="0">
+                                <div class="invalid-feedback">Volunteer count must be 0 or greater.</div>
+                                <small class="form-text text-muted">
+                                    Currently available: {{ camp['volunteers'] }}
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Update Resources
+                            </button>
+                            <a href="{{ url_for('camps') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Camps
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
